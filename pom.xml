@@ -15,6 +15,7 @@
     <httpProxyPort></httpProxyPort>
     <!-- supported protocol TLS SSL SSLv2 SSLv3 -->
     <https.protocol>SSLv3</https.protocol>
+    <net.debug>all</net.debug>
   </properties>
   <dependencies>
     <dependency>
@@ -97,7 +98,7 @@
             <httpProxyPort>${httpProxyPort}</httpProxyPort>
             <otaEndPoint>${otaEndPoint}</otaEndPoint>
             <otaPath>${otaPath}</otaPath>
-            <javax.net.debug>all</javax.net.debug>
+            <javax.net.debug>${net.debug}</javax.net.debug>
             <https.protocol>${https.protocol}</https.protocol>
           </systemPropertyVariables>
         </configuration>
