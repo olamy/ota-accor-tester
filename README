@@ -1,0 +1,3 @@
+to send messages through a proxy :
+ mvn test -DhttpProxyHost=proxyhost -DhttpProxyPort=proxy port
+NTLM NOT SUPPORTED
