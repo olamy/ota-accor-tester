@@ -11,16 +11,14 @@ package com.accor.ota.receiver.test;
 public class HttpSenderRequest
 {
     private String host;
-    
-    private String path;
-    
-    private String xmlRequest;
-    
-    private String proxyHost;
-    
-    private int proxyPort;
 
-    
+    private String path;
+
+    private String xmlRequest;
+
+    private String proxyHost;
+
+    private int proxyPort;
 
     public String getXmlRequest()
     {
@@ -70,5 +68,10 @@ public class HttpSenderRequest
     public void setPath( String path )
     {
         this.path = path;
+    }
+
+    public String toString()
+    {
+        return "host " + host + ", path " + path + ", proxyHost " + proxyHost + ", proxyPort " + proxyPort;
     }
 }

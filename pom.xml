@@ -13,6 +13,8 @@
     <otaPath>/OTAReceiver/soap-messaging</otaPath>
     <httpProxyHost></httpProxyHost>
     <httpProxyPort></httpProxyPort>
+    <!-- supported protocol TLS SSL SSLv2 SSLv3 -->
+    <https.protocol>SSLv3</https.protocol>
   </properties>
   <dependencies>
     <dependency>
@@ -45,16 +47,17 @@
     </dependency>     
     
     <dependency>
-      <groupId>commons-httpclient</groupId>
-      <artifactId>commons-httpclient</artifactId>
-      <version>3.1</version>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging</artifactId>
-        </exclusion>
-      </exclusions>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpcore</artifactId>
+      <version>4.1-beta1</version>
+    </dependency>      
+    
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>4.1-alpha2</version>
     </dependency>    
+        
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
@@ -89,24 +92,14 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>2.5</version>
         <configuration>
-          <systemProperties>
-            <property>
-              <name>httpProxyHost</name>
-              <value>${httpProxyHost}</value>
-            </property>
-            <property>
-              <name>httpProxyPort</name>
-              <value>${httpProxyPort}</value>
-            </property>     
-            <property>
-              <name>otaEndPoint</name>
-              <value>${otaEndPoint}</value>
-            </property>      
-            <property>
-              <name>otaPath</name>
-              <value>${otaPath}</value>
-            </property>            
-          </systemProperties>
+          <systemPropertyVariables>
+            <httpProxyHost>${httpProxyHost}</httpProxyHost>
+            <httpProxyPort>${httpProxyPort}</httpProxyPort>
+            <otaEndPoint>${otaEndPoint}</otaEndPoint>
+            <otaPath>${otaPath}</otaPath>
+            <javax.net.debug>all</javax.net.debug>
+            <https.protocol>${https.protocol}</https.protocol>
+          </systemPropertyVariables>
         </configuration>
       </plugin>
     </plugins>

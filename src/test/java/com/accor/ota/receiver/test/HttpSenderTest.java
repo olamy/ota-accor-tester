@@ -59,19 +59,26 @@ public class HttpSenderTest
     public void testSend()
         throws Exception
     {
+
         try
         {
+            String sslAlgo = System.getProperty( "https.protocol" );
+            log.info( "sslAlgo {}", sslAlgo );
+            HttpSender sender = new HttpSender( sslAlgo );
             InputStream is = new FileInputStream( getTestFile( "/src/test/resources/testfile.xml" ) );
             String rq = IOUtils.toString( is, "UTF-8" );
-            HttpSenderRequest httpSenderRequest = new HttpSenderRequest();
-            httpSenderRequest.setHost( System.getProperty( "otaEndPoint" ) );
-            httpSenderRequest.setPath( System.getProperty( "otaPath", "/OTAReceiver/soap-messaging" ) );
-            httpSenderRequest.setXmlRequest( rq );
-            httpSenderRequest.setProxyHost( System.getProperty( "httpProxyHost" ) );
-            httpSenderRequest.setProxyPort( NumberUtils.toInt( System.getProperty( "httpProxyPort" ) ) );
-            HttpSender sender = new HttpSender();
-            String response = sender.sendHttpRequest( httpSenderRequest );
-            log.info( "response " + response );
+            for ( int i = 1; i <= 5; i++ )
+            {
+                HttpSenderRequest httpSenderRequest = new HttpSenderRequest();
+                httpSenderRequest.setHost( System.getProperty( "otaEndPoint" ) );
+                httpSenderRequest.setPath( System.getProperty( "otaPath", "/OTAReceiver/soap-messaging" ) );
+                httpSenderRequest.setXmlRequest( rq );
+                httpSenderRequest.setProxyHost( System.getProperty( "httpProxyHost" ) );
+                httpSenderRequest.setProxyPort( NumberUtils.toInt( System.getProperty( "httpProxyPort" ) ) );
+
+                String response = sender.sendHttpRequest( httpSenderRequest );
+                log.info( "response " + response );
+            }
         }
         catch ( Exception e )
         {

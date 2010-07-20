@@ -4,12 +4,30 @@
 package com.accor.ota.receiver.test;
 
 import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpException;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.StringRequestEntity;
-import org.apache.commons.httpclient.params.HttpMethodParams;
+import javax.net.ssl.SSLContext;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpVersion;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.params.ConnRoutePNames;
+import org.apache.http.conn.scheme.PlainSocketFactory;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
+import org.apache.http.params.HttpProtocolParams;
 import org.codehaus.plexus.util.IOUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,38 +40,58 @@ public class HttpSender
 {
     private Logger log = LoggerFactory.getLogger( getClass() );
 
-    public HttpSender()
+    private ThreadSafeClientConnManager clientConnectionManager;
+
+    public HttpSender( String sslProtocol )
+        throws NoSuchAlgorithmException, KeyManagementException, UnrecoverableKeyException, KeyStoreException
     {
-        // no-op
+        SchemeRegistry schemeRegistry = new SchemeRegistry();
+
+        // https scheme
+        // TLS
+        //schemeRegistry.register( new Scheme( "https", 443, SSLSocketFactory.getSocketFactory() ) );
+
+        schemeRegistry.register( new Scheme( "https", 443, new SSLSocketFactory( sslProtocol, null, null, null, null,
+                                                                                 null, null ) ) );
+
+        // http scheme
+        schemeRegistry.register( new Scheme( "http", 80, PlainSocketFactory.getSocketFactory() ) );
+
+        clientConnectionManager = new ThreadSafeClientConnManager( schemeRegistry );
     }
 
     public String sendHttpRequest( HttpSenderRequest request )
-        throws HttpException, IOException
+        throws IOException
     {
-        log.info( " System file.encoding " + System.getProperty( "file.encoding" ) );
-
-        HttpClient cli = new HttpClient();
+        HttpParams params = new BasicHttpParams();
+        HttpProtocolParams.setVersion( params, HttpVersion.HTTP_1_1 );
+        DefaultHttpClient httpClient = new DefaultHttpClient( clientConnectionManager, params );
         String host = request.getHost();
-        log.info( "use host " + host );
-        cli.getHostConfiguration().setHost( host );
-        PostMethod pm = new PostMethod( );
-        String path = request.getPath(); 
-        log.info( "use path " + path ); 
-        pm.setPath( path );
-        pm.addRequestHeader( "Content-Type", "text/xml;charset=UTF-8" );
+        log.info( "use HttpSenderRequest {} ", request );
 
-        HttpMethodParams params = new HttpMethodParams();
-        params.setSoTimeout( 10000 );
-        
+        String path = request.getPath();
+
+        HttpPost httpPost = new HttpPost( host + "/" + path );
+
+        httpPost.addHeader( "Content-Type", "text/xml;charset=UTF-8" );
+
         if ( request.getProxyHost() != null )
         {
-            cli.getHostConfiguration().setProxy( request.getProxyHost(), request.getProxyPort() );
+
+            HttpHost proxy = new HttpHost( request.getProxyHost(), request.getProxyPort(), "http" );
+            httpClient.getParams().setParameter( ConnRoutePNames.DEFAULT_PROXY, proxy );
         }
-        pm.setRequestEntity( new StringRequestEntity( request.getXmlRequest(), "text/xml", "UTF-8" ) );
 
-        cli.executeMethod( pm );
+        HttpEntity httpEntity = new ByteArrayEntity( request.getXmlRequest().getBytes() );
 
-        return IOUtil.toString( pm.getResponseBodyAsStream() );
+        httpPost.setEntity( httpEntity );
+
+        HttpConnectionParams.setConnectionTimeout( httpPost.getParams(), 10000 );
+        HttpConnectionParams.setSoTimeout( httpPost.getParams(), 10000 );
+
+        HttpResponse res = httpClient.execute( httpPost );
+
+        return IOUtil.toString( res.getEntity().getContent() );
 
     }
 }

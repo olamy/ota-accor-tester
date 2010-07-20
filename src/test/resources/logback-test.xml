@@ -2,11 +2,11 @@
 <configuration>
   <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
-      <pattern>%m%n</pattern>
+      <pattern>%c{20}%m%n</pattern>
     </encoder>
   </appender>
-  <logger name="httpclient.wire" level="DEBUG"/>
-  <logger name="org.apache.commons.httpclient" level="DEBUG"/>
+  <logger name="org.apache.http" level="DEBUG"/>
+  <logger name="org.apache.http.wire" level="DEBUG"/>
   <root level="INFO">
     <appender-ref ref="CONSOLE"/>
   </root>
