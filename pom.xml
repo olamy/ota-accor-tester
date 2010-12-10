@@ -15,7 +15,7 @@
     <httpProxyPort></httpProxyPort>
     <!-- supported protocol TLS SSL SSLv2 SSLv3 -->
     <https.protocol>SSLv3</https.protocol>
-    <net.debug>all</net.debug>
+    <net.debug>none</net.debug>
   </properties>
   <dependencies>
     <dependency>
