@@ -1,1 +1,1 @@
-curl -vk https://$1/OTAReceiver/OTA2005BServlet -d "`cat ping.xml`"
+curl -vk https://$1/OTAReceiver/OTA2007BServlet -d "`cat ping.xml`"
