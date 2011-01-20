@@ -1,8 +1,9 @@
 to send message to a endpoint :
-mvn test -DotaEndPoint= -DotaPath=
+mvn test -DotaEndPoint= (optionnal -DotaPath=)
+otaEndPoint is something like https://.....
 to send messages through a proxy :
 mvn test -DhttpProxyHost=proxyhost -DhttpProxyPort=proxyPort
 NTLM NOT SUPPORTED
 
 Test with simple cli curl
-./curl-ping.sh targethost
+./curl-ping.sh targethost (only ip or fqdn)
