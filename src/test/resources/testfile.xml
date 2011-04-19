@@ -3,7 +3,7 @@
     <accor:serviceHeader xmlns:accor="http://www.accorhotels.com/ota/soap">
       <accor:service>OTA_PingRQ</accor:service>
       <accor:version>2006B</accor:version>
-      <accor:requester>wotif.com</accor:requester>
+      <accor:requester>someone.com</accor:requester>
       <accor:serviceVersion>1.0</accor:serviceVersion>
     </accor:serviceHeader>
   </soap:Header>
